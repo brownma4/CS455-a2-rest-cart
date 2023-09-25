@@ -1,5 +1,4 @@
 import os
-import copy
 import requests
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
@@ -54,7 +53,7 @@ def get_cart(user_id):
 def add_product_to_cart(user_id, product_id):
 
     # connects to the products server to get all of the products
-    response = requests.get('http://127.0.0.1:5000/products')
+    response = requests.get('https://a-2-product-service.onrender.com/products')
     data = response.json()
 
     # gets the quantity
@@ -88,7 +87,7 @@ def add_product_to_cart(user_id, product_id):
                 add_to_cart = {"id": product["id"], "name": product["name"], "price": product["price"], "quantity": quantity, "user_id": user_id}
                 
                 # removes the amount of product that was added into the user's cart
-                response = requests.post('http://127.0.0.1:5000/products', json=product_to_remove)
+                response = requests.post('https://a-2-product-service.onrender.com/products', json=product_to_remove)
                 
                 # the product to add to the cart
                 add_to_cart2 = Product(**add_to_cart)
@@ -135,7 +134,7 @@ def remove_product_from_cart(user_id, product_id):
                 remove_from_cart = {"id": product_id, "name": product.name, "price": product.price, "quantity": quantity, "user_id": user_id}
 
                 # adds the amount of product that was removed from the cart back into the available products server
-                requests.post('http://127.0.0.1:5000/products', json=remove_from_cart)
+                requests.post('https://a-2-product-service.onrender.com/products', json=remove_from_cart)
 
                 product.quantity = product.quantity - quantity
 
@@ -155,5 +154,5 @@ def remove_product_from_cart(user_id, product_id):
 
 
 if __name__ == '__main__':
-    #db.create_all()
-    app.run(debug=True)
+    db.create_all()
+    app.run(debug=True, host="0.0.0.0", port=10000)
